@@ -19,14 +19,14 @@ def mean_score(a, ex):
     sum = 0
     for x in ex:
         sum += float(a[x + 2])
-    return sum / len(ex)
+    return max(sum / len(ex), float(a[6]))
 
 # d - department, 1..3 - rank
 def choise_by_rank(d, rank):
     ex = departments[d]
     n1 = n - len(map_by_dep[d])
     sort_exam(apps, ex)
-    app_d = [a for m, a in enumerate(filter(lambda x: x[rank + 5] == d, apps)) if m < n1]
+    app_d = [a for m, a in enumerate(filter(lambda x: x[rank + 6] == d, apps)) if m < n1]
     map_by_dep[d] += app_d
     for a in app_d:
         apps.remove(a)
@@ -38,9 +38,11 @@ def save_data():
         ex = departments[d]
         sort_exam(map_by_dep[d], ex)
         fn = d.lower() + ".txt"
+        print(f"\n{d}")
         with open(fn, "w") as file:
             for a in map_by_dep[d]:
                 file.write(f"{a[0]} {a[1]} {mean_score(a, ex)}\n")
+                print(f"{a[0]} {a[1]} {mean_score(a, ex)}")
 
 
 n = int(input())
@@ -54,10 +56,3 @@ while apps and dep_to_do and rank < 3:
     for d in dep:
         choise_by_rank(d, rank)
 save_data()
-# for d in sorted(map_by_dep):
-#     print(f"\n{d}")
-#     ex = departments[d]
-#     sort_exam(map_by_dep[d], ex)
-#     for a in map_by_dep[d]:
-#         print(f"{a[0]} {a[1]} {mean_score(a, ex)}")
-
