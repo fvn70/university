@@ -1,19 +1,27 @@
 from copy import copy
 
-departments = {'Biotech': 1, 'Chemistry': 1, 'Engineering': 3, 'Mathematics': 2, 'Physics': 0}
+departments = {'Biotech': [0, 1], 'Chemistry': [1], 'Engineering': [2, 3], 'Mathematics': [2], 'Physics': [0, 2]}
 exams = {'physics', 'chemistry', 'math', 'computer science'}
 
 def load_data():
     list = []
-    with open('applicans.txt') as file:
+    with open('applicants.txt') as file:
         for ln in file:
             list.append(ln.split())
     return list
 
 
 # k in [0..3] - exams list
-def sort_exam(list, k):
-    list.sort(key=lambda x: (-float(x[k + 2]), x[0], x[1]))
+def sort_exam(list, ex):
+    list.sort(key=lambda x: (-mean_score(x, ex), x[0], x[1]))
+
+
+# a - student info, ex - exams list
+def mean_score(a, ex):
+    sum = 0
+    for x in ex:
+        sum += float(a[x + 2])
+    return sum / len(ex)
 
 
 # d - department, k = 1..3 - rank
@@ -29,6 +37,16 @@ def choise_by_rank(d, rank):
         dep_to_do.remove(d)
 
 
+def save_data():
+    for d in sorted(map_by_dep):
+        ex = departments[d]
+        sort_exam(map_by_dep[d], ex)
+        fn = d.lower() + ".txt"
+        with open(fn, "w") as file:
+            for a in map_by_dep[d]:
+                file.write(f"{a[0]} {a[1]} {mean_score(a, ex)}\n")
+
+
 n = int(input())
 apps = load_data()
 map_by_dep = {d: [] for d in departments}
@@ -41,9 +59,4 @@ while apps and dep_to_do and rank < 3:
     for d in dep:
         choise_by_rank(d, rank)
 
-for d in sorted(map_by_dep):
-    print(f"\n{d}")
-    exam = departments[d]
-    sort_exam(map_by_dep[d], exam)
-    for a in map_by_dep[d]:
-        print(f"{a[0]} {a[1]} {a[exam + 2]}")
+save_data()
