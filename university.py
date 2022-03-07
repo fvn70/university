@@ -1,9 +1,17 @@
-x1 = int(input())
-x2 = int(input())
-x3 = int(input())
-y = (x1 + x2 + x3) / 3
-print(y)
-if y >= 60:
-    print('Congratulations, you are accepted!')
-else:
-    print('We regret to inform you that we will not be able to offer you admission.')
+def load_data(m):
+    list = []
+    for _ in range(m):
+        list.append(input().split(' '))
+    return list
+
+def sort_gpa():
+    apps.sort(key=lambda x: (-float(x[2]), x[0], x[1]))
+
+
+n = int(input())
+m = int(input())
+apps = load_data(n)
+sort_gpa()
+print('Successful applicants:')
+for a in apps[:m]:
+    print(*a[:2])
